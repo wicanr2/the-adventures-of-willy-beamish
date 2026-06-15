@@ -1,0 +1,43 @@
+# ===== Copyrighted game data — NEVER commit (derivative localization work only) =====
+# Disc images / installers
+*.iso
+*.zip
+*.7z
+*.chd
+*.bin
+*.cue
+# Extracted game install dir + raw resources (all copyrighted)
+game/
+game_*/
+extracted/
+extracted_*/
+RESOURCE.001
+RESOURCE.MAP
+# Extracted original English text (copyrighted source)
+dialogs_en.json
+dialogs_*.json
+ui_skeleton.json
+ttm_strings*.json
+
+# ===== Build artifacts =====
+*.pyc
+__pycache__/
+build/
+*.AppImage
+*.dcjk
+fonts/*.dcjk
+dist/
+
+# ===== ScummVM source tree (bulky; clone fresh) =====
+scummvm-src/
+scummvm/
+
+# ===== Local QA artifacts =====
+screenshots/_*.png
+autopilot.txt
+autopilot_shots/
+scripts/_*.sh
+
+# ===== Editor / OS =====
+.DS_Store
+*.swp
