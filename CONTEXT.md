@@ -71,6 +71,7 @@ Domain glossary。寫程式、命名、文件時一律用這套術語。
 | Sentinel / Plumbers Union ? | **水管工會** | 戈登任職、被陷害 |
 | Carbuncle Elementary ? | **卡邦可小學** | 威利的學校（過場字幕）|
 | KNTY / KMED / KROK / KBAT / KGOD / KTOK ? | 廣播台呼號（玩梗）| 電台/電視戲仿，可玩諧音 |
+| Ninja family / Tourists ✓ | **忍者家族（日本觀光客）** | ⭐ 遊戲中的**日本忍者旅遊家族**，會在屋頂戰助威利。對白帶**日式敬語/古風**（吾等向汝下戰帖）、保留日語味（Domo arigato）、手裏劍(手裡劍/shuriken)、壽司、煙霧彈等忍者元素 |
 
 說話人標籤格式：`WILLY:` → `威利：`（全形冒號）。原文有誤拼（SHIELA→Sheila、LORY LOVCAKE→Lory Lovecakes、MR FRICK→Mr. Frick）翻譯時一併歸位。
 
