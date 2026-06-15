@@ -1262,7 +1262,7 @@ index 2dc84cdb..42346018 100644
  	console.o \
  	decompress.o \
 diff --git a/engines/dgds/request.cpp b/engines/dgds/request.cpp
-index 60bff928..1e360a46 100644
+index 60bff928..8b4e281e 100644
 --- a/engines/dgds/request.cpp
 +++ b/engines/dgds/request.cpp
 @@ -473,6 +473,16 @@ void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
@@ -1290,7 +1290,7 @@ index 60bff928..1e360a46 100644
  	} else if (gameId == GID_WILLY && _height == 32) {
  		drawWillyBmpButtons(dst);
  	}
-@@ -996,14 +1007,24 @@ void RequestData::drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, ui
+@@ -996,14 +1007,28 @@ void RequestData::drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, ui
  void RequestData::drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header, byte fontCol, bool drawBox, byte boxTopColor, byte boxBottomColor) {
  	if (!header.empty()) {
  		const DgdsFont *font = getMenuFont();
@@ -1308,9 +1308,13 @@ index 60bff928..1e360a46 100644
 -		font->drawString(dst, header, hleft + 1, htop + 2, hwidth, fontCol);
 +		if (zhHdr) {
 +			// CJK glyphs are taller than the small English menu font, so htop+2 (tuned for the
-+			// English baseline) makes the name sag below the plate down into the dialog box.
-+			// Center the glyph vertically in the plate box [htop, htop+hheight] instead.
++			// English baseline) makes the name sag below the plate into the dialog box. Center
++			// the glyph in the plate box [htop, htop+hheight] — but Willy's plate is shorter than
++			// a 24px CJK glyph, so centering would push the top above the frame; clamp at htop so
++			// the name never clips the plate's top edge.
 +			int cjkY = htop + (hheight - cjk.fontHeight()) / 2;
++			if (cjkY < htop)
++				cjkY = htop;
 +			cjk.deferLine(hleft + 1, cjkY, hwidth, fontCol, *zhHdr, Graphics::kTextAlignLeft, font);
 +		} else
 +			font->drawString(dst, header, hleft + 1, htop + 2, hwidth, fontCol);
