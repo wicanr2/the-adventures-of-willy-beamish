@@ -920,10 +920,37 @@ index 1eedfb4d..5b09063b 100644
  	const Common::SharedPtr<Image> &getIcons() { return _icons; }
  	GamePalettes *getGamePals() { return _gamePals; }
 diff --git a/engines/dgds/dialog.cpp b/engines/dgds/dialog.cpp
-index 95c84790..c985aa3c 100644
+index 95c84790..be7cbd0d 100644
 --- a/engines/dgds/dialog.cpp
 +++ b/engines/dgds/dialog.cpp
-@@ -553,10 +553,90 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
+@@ -213,6 +213,26 @@ void Dialog::drawType2(Graphics::ManagedSurface *dst, DialogDrawStage stage) {
+ 			txt.replace(offset, 6, numstr);
+ 	}
+ 
++	// CHT: 24px CJK is taller than the small English font the box was sized for, so 3+ line
++	// dialogs overflow the bottom. Grow the box downward (clamped to the screen) to fit the
++	// wrapped CJK text, before either draw stage sizes the frame / text area from _rect.
++	{
++		CJKSupport &cjk = engine->getCJK();
++		if (cjk.isCJK() && cjk.hasOverlay() && engine->getScene()) {
++			uint16 dlgKey = _fileNum ? _fileNum : engine->getScene()->getNum();
++			const Common::String *tr = cjk.lookupDialog(dlgKey, _num);
++			if (tr) {
++				const DgdsFont *afont = getDlgTextFont();
++				const int lh = cjk.fontHeight() + 1;
++				Common::StringArray zl;
++				cjk.wrapText(*tr, _rect.width - 16, zl, afont);
++				int need = (int)zl.size() * lh + 13 + (title.empty() ? 0 : 11);
++				if (_rect.height < need)
++					_rect.height = MIN<int>(need, 200 - _rect.y - 1);
++			}
++		}
++	}
++
+ 	if (stage == kDlgDrawStageBackground) {
+ 		if (engine->getGameId() == GID_DRAGON)
+ 			drawType2BackgroundDragon(dst, title);
+@@ -553,10 +573,90 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
  	// For now do the simplest wrapping, no highlighting.
  	assert(_state);
  
@@ -1015,7 +1042,7 @@ index 95c84790..c985aa3c 100644
  	uint numPrintedLines = _countPrintedLines(lines);
  
  	int ystart = _state->_loc.y + (_state->_loc.height - (int)numPrintedLines * h) / 2;
-@@ -567,12 +647,12 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
+@@ -567,12 +667,12 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
  	int highlightEnd = INT_MAX;
  	if (_state->_selectedAction) {
  		// find the txt in the full dlg string, as action offsets include the heading
@@ -1030,7 +1057,7 @@ index 95c84790..c985aa3c 100644
  
  	Graphics::TextAlign align;
  	int xwidth;
-@@ -666,7 +746,7 @@ void Dialog::updateSelectedAction(int delta) {
+@@ -666,7 +766,7 @@ void Dialog::updateSelectedAction(int delta) {
  
  	if (_action.size() > 1 || !delta) {
  		debug(1, "Dialog %d: update mouse to %d, %d (mouseloc %d, selnum %d)", _num, mouseX, mouseY, _state->_strMouseLoc, _lastSelectedDialogItemNum);
@@ -1235,7 +1262,7 @@ index 2dc84cdb..42346018 100644
  	console.o \
  	decompress.o \
 diff --git a/engines/dgds/request.cpp b/engines/dgds/request.cpp
-index 60bff928..61fbce8c 100644
+index 60bff928..1e360a46 100644
 --- a/engines/dgds/request.cpp
 +++ b/engines/dgds/request.cpp
 @@ -473,6 +473,16 @@ void ButtonGadget::draw(Graphics::ManagedSurface *dst) const {
@@ -1263,7 +1290,7 @@ index 60bff928..61fbce8c 100644
  	} else if (gameId == GID_WILLY && _height == 32) {
  		drawWillyBmpButtons(dst);
  	}
-@@ -996,14 +1007,20 @@ void RequestData::drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, ui
+@@ -996,14 +1007,24 @@ void RequestData::drawCorners(Graphics::ManagedSurface *dst, uint16 startNum, ui
  void RequestData::drawHeader(Graphics::ManagedSurface *dst, int16 x, int16 y, int16 width, int16 yoffset, const Common::String &header, byte fontCol, bool drawBox, byte boxTopColor, byte boxBottomColor) {
  	if (!header.empty()) {
  		const DgdsFont *font = getMenuFont();
@@ -1279,9 +1306,13 @@ index 60bff928..61fbce8c 100644
  		int hbottom = htop + hheight;
  
 -		font->drawString(dst, header, hleft + 1, htop + 2, hwidth, fontCol);
-+		if (zhHdr)
-+			cjk.deferLine(hleft + 1, htop + 2, hwidth, fontCol, *zhHdr, Graphics::kTextAlignLeft, font);
-+		else
++		if (zhHdr) {
++			// CJK glyphs are taller than the small English menu font, so htop+2 (tuned for the
++			// English baseline) makes the name sag below the plate down into the dialog box.
++			// Center the glyph vertically in the plate box [htop, htop+hheight] instead.
++			int cjkY = htop + (hheight - cjk.fontHeight()) / 2;
++			cjk.deferLine(hleft + 1, cjkY, hwidth, fontCol, *zhHdr, Graphics::kTextAlignLeft, font);
++		} else
 +			font->drawString(dst, header, hleft + 1, htop + 2, hwidth, fontCol);
  		if (drawBox) {
  			dst->hLine(hleft - 3, htop, hright, boxTopColor);
