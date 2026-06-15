@@ -920,10 +920,10 @@ index 1eedfb4d..5b09063b 100644
  	const Common::SharedPtr<Image> &getIcons() { return _icons; }
  	GamePalettes *getGamePals() { return _gamePals; }
 diff --git a/engines/dgds/dialog.cpp b/engines/dgds/dialog.cpp
-index 95c84790..2813faca 100644
+index 95c84790..c985aa3c 100644
 --- a/engines/dgds/dialog.cpp
 +++ b/engines/dgds/dialog.cpp
-@@ -553,10 +553,89 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
+@@ -553,10 +553,90 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
  	// For now do the simplest wrapping, no highlighting.
  	assert(_state);
  
@@ -933,9 +933,10 @@ index 95c84790..2813faca 100644
 +		DgdsEngine *engine = DgdsEngine::getInstance();
 +		CJKSupport &cjk = engine->getCJK();
 +		if (cjk.hasOverlay() && engine->getScene()) {
-+			// Willy Beamish keys dialogs by their D<N>.DDS file number (_fileNum);
-+			// Rise of the Dragon embeds dialogs in the scene, so it keys by scene number.
-+			uint16 dlgKey = (engine->getGameId() == GID_WILLY) ? _fileNum : engine->getScene()->getNum();
++			// Game-agnostic dialog key: Willy Beamish / Heart of China load dialogs from
++			// D<N>.DDS files so _fileNum > 0 is the natural key; Rise of the Dragon embeds
++			// dialogs in the scene (_fileNum == 0), so it falls back to the scene number.
++			uint16 dlgKey = _fileNum ? _fileNum : engine->getScene()->getNum();
 +			const Common::String *tr = cjk.lookupDialog(dlgKey, _num);
 +			if (tr) {
 +				if (cjk.isCJK()) {
@@ -1014,7 +1015,7 @@ index 95c84790..2813faca 100644
  	uint numPrintedLines = _countPrintedLines(lines);
  
  	int ystart = _state->_loc.y + (_state->_loc.height - (int)numPrintedLines * h) / 2;
-@@ -567,12 +646,12 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
+@@ -567,12 +647,12 @@ void Dialog::drawForeground(Graphics::ManagedSurface *dst, uint16 fontcol, const
  	int highlightEnd = INT_MAX;
  	if (_state->_selectedAction) {
  		// find the txt in the full dlg string, as action offsets include the heading
@@ -1029,7 +1030,7 @@ index 95c84790..2813faca 100644
  
  	Graphics::TextAlign align;
  	int xwidth;
-@@ -666,7 +745,7 @@ void Dialog::updateSelectedAction(int delta) {
+@@ -666,7 +746,7 @@ void Dialog::updateSelectedAction(int delta) {
  
  	if (_action.size() > 1 || !delta) {
  		debug(1, "Dialog %d: update mouse to %d, %d (mouseloc %d, selnum %d)", _num, mouseX, mouseY, _state->_strMouseLoc, _lastSelectedDialogItemNum);
