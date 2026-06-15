@@ -41,3 +41,7 @@ scripts/_*.sh
 # ===== Editor / OS =====
 .DS_Store
 *.swp
+
+# ===== 攻略掃描 PDF（版權，勿入庫；轉寫文字在 docs/）=====
+/攻略/
+*.pdf

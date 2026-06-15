@@ -41,8 +41,10 @@ Domain glossary。寫程式、命名、文件時一律用這套術語。
 | Tiffany ✓ | **蒂芬妮** | 69句。青少女姊姊，黏電話、戀愛腦 |
 | Brianna ✓ | **布莉安娜** | 29句。嬰兒妹妹 |
 | Ghost Beamish ✓ | **比米許爺爺**（鬼魂）| 21句。過世爺爺化作鬼魂給威利建議 |
-| Duffy / Dufus ? | **杜菲** | 家裡的狗（過場「Willy walks Duffy」）。玩梗候選：笨笨 |
-| Sparky ? | **史帕奇** | 寵物青蛙，主角訓練去比 Tootsweet 青蛙跳大賽。玩梗候選：跳跳/阿霸 |
+| Duffy / Dufus ✓ | **杜菲** | 家裡的狗（過場「Willy walks Duffy」）|
+| **Horny** ✓ | **霍尼** | ⭐ **威利的寵物青蛙**（40 句），訓練去比 Tootsweet 青蛙跳大賽。**不是 Sparky**（遊戲無 Sparky）、也不是 Nintari 惡魔 |
+| Gigi ✓ | **姬姬** | 母青蛙，霍尼的愛慕對象 |
+| Turbofrog ✓ | **渦輪蛙** | 對手參賽蛙（紀錄保持者）|
 
 ### 配角 — 適度玩梗
 
@@ -58,7 +60,6 @@ Domain glossary。寫程式、命名、文件時一律用這套術語。
 | Ms. Glass ? | **葛拉斯老師** | 21句。班導 |
 | Stan Lather ? | **史丹·拉瑟** | 13句 |
 | Arthur / Ray / Alicia / Frank / Burt / Gus / Hans … | 音譯待定 | 其餘小配角，翻譯時音譯並登錄 |
-| Horny ? | **霍尼** | Nintari 掌機遊戲裡的小惡魔。玩梗空間大 |
 
 ### 專有名詞 / 戲仿 — 玩梗
 
@@ -73,6 +74,12 @@ Domain glossary。寫程式、命名、文件時一律用這套術語。
 
 說話人標籤格式：`WILLY:` → `威利：`（全形冒號）。原文有誤拼（SHIELA→Sheila、LORY LOVCAKE→Lory Lovecakes、MR FRICK→Mr. Frick）翻譯時一併歸位。
 
+## 1990s 官方術語 oracle
+
+- **軟體世界第 34、35 期攻略**（作者阿寬）逐頁轉寫於 [`docs/攻略/軟體世界-威利奇遇記-完全攻略.md`](docs/攻略/軟體世界-威利奇遇記-完全攻略.md)。
+- 標題《威利奇遇記》、青蛙跳賽事「凱旋大賽」等 1990s 用法可參考；但**人名/拼字一律以遊戲 `dialogs_en.json` 為準**（雜誌有 OCR 與人工翻譯誤差，如 Frumford→Frumpton、NINTAW→Nintari）。
+
 ## Flagged ambiguities
 
-- 譯名表全待 speaker tag 實證 + 使用者確認；配角（Sparky 青蛙、Leona 反派、Nintari/Frog Wars 戲仿等）玩梗程度待定。
+- 配角玩梗程度（Leona 反派、Nintari 戲仿、電台呼號等）待定。
+- ~~Sparky 青蛙~~ 已釐清：寵物青蛙是 **Horny（霍尼）**，遊戲中無 Sparky。
