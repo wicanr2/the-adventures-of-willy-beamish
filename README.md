@@ -52,17 +52,17 @@
 
 你需要一份**自己合法擁有**的 Willy Beamish 遊戲資料夾（內含 `RESOURCE.MAP` + `RESOURCE.001`）。本專案**不含、也不發布**任何遊戲原始檔。
 
-1. 下載 [`Willy-Beamish-CHT-x86_64.AppImage`](#) 或 `willy-cht-linux-x86_64.tar.gz`。
-2. 把它放到你的遊戲資料夾旁邊，執行：
+中文化已打包成**四大平台**（中文是「疊」在原始英文遊戲上的 overlay，可隨時切回英文對照，存檔與遊戲檔完全不受影響）：
 
-   ```bash
-   ./Willy-Beamish-CHT-x86_64.AppImage              # 自動偵測旁邊的遊戲
-   ./Willy-Beamish-CHT-x86_64.AppImage /你的/遊戲路徑   # 或直接指定
-   ```
+| 平台 | 產物 | 怎麼玩 |
+|---|---|---|
+| **Linux** | `Willy-Beamish-CHT-x86_64.AppImage`（單檔）/ `willy-cht-linux-x86_64.tar.gz` | `./Willy-Beamish-CHT-x86_64.AppImage /你的/遊戲路徑`（不給路徑會自動偵測旁邊的遊戲）|
+| **Windows** | `willy-cht-windows-x86_64.zip` | 把遊戲資料夾改名 `game` 放進解壓資料夾，雙擊 `play-willy-cht.bat` |
+| **macOS** | `willy-cht-macos.tar.gz`（arm64 `.app`）| `Contents/MacOS/scummvm --extrapath=Contents/Resources/extra --path=<遊戲> beamish` |
+| **Android** | `willy-cht-android-FULL.apk`（含遊戲，自留）/ 或 CI base APK + 本機注入 | 直接安裝，開 app 即可玩 |
 
-3. 預設就是**中文 24×24**。遊戲中按 **F8** 循環：中文 24×24 → 中文 16×16 → 英文原版。
-
-就這樣。中文是「疊」在原始英文遊戲之上的 overlay，隨時可以切回英文對照，你的存檔與遊戲檔完全不受影響。
+- 預設就是**中文 24×24**。遊戲中按 **F8** 循環：中文 24×24 → 中文 16×16 → 英文原版。
+- 引擎來源：Linux/Windows 本機（mingw 交叉編譯）、macOS/Android 由 GitHub Actions CI（`.github/workflows/build.yml`）建置。**含遊戲的完整包僅供自己保存，請勿散布。**
 
 ---
 
