@@ -34,7 +34,7 @@ scummvm/
 
 # ===== Local QA artifacts =====
 screenshots/_*.png
-autopilot.txt
+autopilot.txt*
 autopilot_shots/
 scripts/_*.sh
 
