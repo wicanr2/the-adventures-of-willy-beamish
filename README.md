@@ -104,6 +104,16 @@
 
 中文化保留了這份魔法：配音還是英文（我們沒有重配），但**字幕全部中文**。遊戲內按 `Alt+B` 可以開關字幕、`Alt+T` 開關語音 —— 你可以一邊聽英文配音、一邊讀中文字幕，像看一齣有字幕的卡通。技術上，這也帶來一個有趣的考古發現，留到[技術深潛](#talkie-tech)再說。
 
+下面是**實機 gameplay**（真滑鼠驅動，非擺拍）：暑假前最後一天的教室裡，威利、葛拉斯老師、同學卡敏輪流講話 —— 每個人的會說話頭像配上自己的中文名牌與字幕：
+
+<p align="center">
+  <img src="screenshots/gameplay_options_16.png" width="32%" alt="威利（16×16，三選項全進框）"/>
+  <img src="screenshots/gameplay_glass_16.png" width="32%" alt="葛拉斯老師"/>
+  <img src="screenshots/gameplay_carmine_16.png" width="32%" alt="同學卡敏"/>
+</p>
+
+> 16×16 字級下三個對話選項剛好全部塞進對話框；24×24 字級更大更清楚，適合單句對白。按 F8 即時切換。
+
 ---
 
 <a name="names"></a>
