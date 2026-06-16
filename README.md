@@ -6,6 +6,12 @@
 > 在 ScummVM 上遊玩，按一個鍵就能在中英文之間切換 —— 不改你的任何一個遊戲檔。
 
 <p align="center">
+  <img src="screenshots/title.png" width="80%" alt="威利奇遇記 標題畫面"/>
+</p>
+
+> 標題畫面在英文金字「Willy Beamish」下方加上同款金色中文副標**「威利奇遇記」** —— 不只是 README 的圖，**遊戲執行時的標題畫面也會即時疊上**（引擎 overlay，模仿英文字體的金色漸層與描邊）。
+
+<p align="center">
   <img src="screenshots/dialogue_zh24.png" width="48%" alt="中文對話"/>
   <img src="screenshots/thought_zh24.png" width="48%" alt="霍尼的心聲"/>
 </p>
