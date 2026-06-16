@@ -170,14 +170,16 @@ index 00000000..48688be0
 +#endif
 diff --git a/engines/dgds/cjk.cpp b/engines/dgds/cjk.cpp
 new file mode 100644
-index 00000000..7c7e3239
+index 00000000..d16cb6be
 --- /dev/null
 +++ b/engines/dgds/cjk.cpp
-@@ -0,0 +1,342 @@
+@@ -0,0 +1,403 @@
 +/* ScummVM dgds CJK localization support (Rise of the Dragon CHT). Non-upstream. */
 +
 +#include "common/file.h"
 +#include "common/debug.h"
++#include "common/system.h"
++#include "graphics/paletteman.h"
 +#include "dgds/cjk.h"
 +#include "dgds/dgds.h"
 +#include "dgds/font.h"
@@ -507,21 +509,80 @@ index 00000000..7c7e3239
 +	}
 +}
 +
++static byte nearestPalIdx(const byte *pal, int r, int g, int b) {
++	int best = 0; long bestd = 0x7fffffff;
++	for (int i = 0; i < 256; i++) {
++		long dr = pal[i * 3] - r, dg = pal[i * 3 + 1] - g, db = pal[i * 3 + 2] - b;
++		long d = dr * dr + dg * dg + db * db;
++		if (d < bestd) { bestd = d; best = i; }
++	}
++	return (byte)best;
++}
++
++// Draw 「威利奇遇記」 in gold with a dark outline, centered under the title's English lettering.
++// CLUT8 buffer -> pick the nearest palette indices to gold / dark-navy from the live title palette.
++void CJKSupport::drawTitleSubtitle(Graphics::ManagedSurface *dst) {
++	if (!_glyphs)
++		return;
++	byte pal[768];
++	g_system->getPaletteManager()->grabPalette(pal, 0, 256);
++	const byte gold = nearestPalIdx(pal, 255, 201, 112);
++	const byte dark = nearestPalIdx(pal, 18, 22, 64);
++	static const byte s[] = {0xab, 0xc2, 0xa7, 0x51, 0xa9, 0x5f, 0xb9, 0x4a, 0xb0, 0x4f}; // 威利奇遇記 (Big5)
++	const int nch = 5;
++	const int adv = _w + 4;
++	const int totalw = nch * adv - 4;
++	int x = (dst->w - totalw) / 2;
++	const int y = 304;
++	static const int ox[] = {-2, 2, 0, 0, -2, 2, -2, 2};
++	static const int oy[] = {0, 0, -2, 2, -2, -2, 2, 2};
++	for (int c = 0; c < nch; c++) {
++		int idx = big5LinearIndex(s[c * 2], s[c * 2 + 1]);
++		if (idx < 0) continue;
++		int gx = x + c * adv;
++		for (int o = 0; o < 8; o++)
++			drawGlyph(dst, idx, gx + ox[o], y + oy[o], dark);
++		drawGlyph(dst, idx, gx, y, gold);
++	}
++}
++
 +void CJKSupport::flushDeferred(Graphics::ManagedSurface *dst) {
 +	// Persistent TTM background text first, then per-frame dialogs/menus on top.
 +	for (const DeferredLine &dl : _deferredBg)
 +		drawDeferredLine(dst, dl);
 +	for (const DeferredLine &dl : _deferred)
 +		drawDeferredLine(dst, dl);
++	// Willy Beamish title: overlay the golden Chinese subtitle 「威利奇遇記」 under the baked-in
++	// "Willy Beamish" lettering on the title screen. The title is held while the TTM keeps changing
++	// the background-FILE under it (TVNNI2/INTROHW night-cityscapes), so a single-frame bg test
++	// flickers. Instead LATCH: when a title cityscape appears, arm the subtitle for a window of
++	// frames that outlasts the hold; the alarm-clock wake-up (CLOCKBG.SCR) disarms it immediately so
++	// it can't leak into the daydream / gameplay.
++	DgdsEngine *eng = DgdsEngine::getInstance();
++	if (eng->getGameId() == GID_WILLY) {
++		const Common::String &bg = eng->getBackgroundFile();
++		if (bg.hasPrefixIgnoreCase("NITTIT") || bg.hasPrefixIgnoreCase("TVNNI") ||
++		    bg.hasPrefixIgnoreCase("INTROHW"))
++			_titleTicks = 12;        // (re)arm while a title cityscape is the bg; the short latch
++			                         // just bridges the 1-2 frame gaps as the held title flips
++			                         // between TVNNI*/INTROHW/NITTIT backgrounds.
++		else if (!bg.empty())
++			_titleTicks = 0;         // any other named screen (bedroom daydream, alarm clock,
++			                         // gameplay) -> kill immediately, no leak.
++		if (isCJK() && _titleTicks > 0) {
++			_titleTicks--;
++			drawTitleSubtitle(dst);
++		}
++	}
 +}
 +
 +} // namespace Dgds
 diff --git a/engines/dgds/cjk.h b/engines/dgds/cjk.h
 new file mode 100644
-index 00000000..0f1a3eb8
+index 00000000..ff5b94e1
 --- /dev/null
 +++ b/engines/dgds/cjk.h
-@@ -0,0 +1,120 @@
+@@ -0,0 +1,126 @@
 +/* ScummVM dgds CJK / multi-language localization support (Rise of the Dragon CHT).
 + * Non-upstream: engine-side translation overlays + bitmap fonts + display-mode cycle.
 + */
@@ -599,7 +660,12 @@ index 00000000..0f1a3eb8
 +	void clearDeferredBgRect(const Common::Rect &rect);
 +	void flushDeferred(Graphics::ManagedSurface *dst640);
 +
++	// Disarm the Willy title subtitle (e.g. when the attract's credits scroll begins, which marks
++	// the end of the "Willy Beamish" title lettering).
++	void clearTitle() { _titleTicks = 0; }
++
 +private:
++	void drawTitleSubtitle(Graphics::ManagedSurface *dst);
 +	struct BitmapFont {
 +		byte w = 0, h = 0, bpr = 0;
 +		uint32 num = 0;
@@ -616,6 +682,7 @@ index 00000000..0f1a3eb8
 +	void drawDeferredLine(Graphics::ManagedSurface *dst, const DeferredLine &dl);
 +
 +	bool _loaded;
++	int _titleTicks = 0;   // frames remaining to draw the Willy title subtitle (latched on title screen)
 +	DisplayMode _mode;
 +	Common::Array<DisplayMode> _avail; // modes whose data actually loaded
 +
@@ -1379,7 +1446,7 @@ index 29ca00a6..895b57ba 100644
  	GameItem *getDragItem() { return _dragItem; }
  	void setDragItem(GameItem *item) { _dragItem = item; }
 diff --git a/engines/dgds/ttm.cpp b/engines/dgds/ttm.cpp
-index 36ed1bc4..fcadd02e 100644
+index 36ed1bc4..0d088b87 100644
 --- a/engines/dgds/ttm.cpp
 +++ b/engines/dgds/ttm.cpp
 @@ -27,6 +27,7 @@
@@ -1577,3 +1644,13 @@ index 36ed1bc4..fcadd02e 100644
  		break;
  	}
  	case 0xa300:
+@@ -1080,6 +1096,9 @@ void TTMInterpreter::handleOperation(TTMEnviro &env, TTMSeq &seq, uint16 op, byt
+ 	case 0xb000: // INIT CREDITS SCRLL
+ 		if (seq._executed) // this is a one-shot op
+ 			break;
++		// Willy Beamish CHT: credits scroll begins -> the title lettering is done, drop the subtitle.
++		if (_vm->getGameId() == GID_WILLY)
++			_vm->getCJK().clearTitle();
+ 		env._creditScrollMeasure = doInitCreditScrollOp(env._scriptShapes[seq._currentBmpId].get());
+ 		env._creditScrollYOffset = 0;
+ 		break;
